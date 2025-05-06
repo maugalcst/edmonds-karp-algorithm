@@ -1,10 +1,7 @@
 from collections import deque
 
+# Función para buscar un camino aumentante en la red residual
 def bfs(residual, s, t, parent):
-    """
-    Busca un camino aumentante en 'residual' desde s hasta t.
-    Devuelve True si existe, y rellena parent[] para reconstruir la ruta.
-    """
     visited = [False] * len(residual)
     queue = deque([s])
     visited[s] = True
@@ -21,21 +18,15 @@ def bfs(residual, s, t, parent):
                 queue.append(v)
     return False
 
+# Algoritmo Edmonds–Karp para flujo máximo
 def edmonds_karp(capacity, s, t):
-    """
-    Calcula el flujo máximo de s a t usando Edmonds–Karp.
-    'capacity' es una matriz n×n de capacidades.
-    Devuelve el valor del flujo máximo.
-    """
     n = len(capacity)
-    # Copiamos capacity en residual para no modificar la original
     residual = [row[:] for row in capacity]
     parent = [-1] * n
     max_flow = 0
 
-    # Mientras haya un camino aumentante
     while bfs(residual, s, t, parent):
-        # Encontrar la capacidad mínima a lo largo del camino hallado
+        # Encuentra el caudal mínimo (cuello de botella) en este camino
         path_flow = float('inf')
         v = t
         while v != s:
@@ -43,8 +34,7 @@ def edmonds_karp(capacity, s, t):
             path_flow = min(path_flow, residual[u][v])
             v = u
 
-        # Actualizar la red residual: restar en la dirección del camino
-        # y sumar en la dirección opuesta (arista inversa)
+        # Actualiza la red residual
         v = t
         while v != s:
             u = parent[v]
@@ -57,22 +47,28 @@ def edmonds_karp(capacity, s, t):
     return max_flow
 
 if __name__ == "__main__":
-    # Lectura de datos
-    # Formato:
-    # n m
-    # u1 v1 c1
-    # ...
-    # um vm cm
-    # s t
-    n, m = map(int, input().split())
-    # Inicializa matriz de capacidades n×n con ceros
+    print("\n=== Cálculo de Flujo Máximo (Edmonds–Karp) ===")
+    print("se usa la analogía como un conjunto de tuberías por donde fluye agua.")
+    print("Cada tubería (arista) tiene un diámetro máximo (capacidad) que no puedes superar.\n")
+
+    # Entrada de nodos y aristas
+    entrada = input("Introduce el número de nodos y aristas separados por espacio (ej. '4 5'): ")
+    n, m = map(int, entrada.split())
+
+    # Inicializa matriz de capacidades
     capacity = [[0]*n for _ in range(n)]
 
-    for _ in range(m):
-        u, v, c = map(int, input().split())
+    print(f"\nAhora define tus tuberías. Vas a introducir {m} tuberías.")
+    print("Para cada tubería, ingresa: nodo_origen nodo_destino capacidad")
+    for i in range(m):
+        linea = input(f"Tubería {i+1}/{m}: ")
+        u, v, c = map(int, linea.split())
         capacity[u][v] = c
 
-    s, t = map(int, input().split())
+    # Nodo fuente y sumidero
+    st = input("\nIntroduce el nodo fuente y el nodo sumidero separados por espacio (ej. '0 3'): ")
+    s, t = map(int, st.split())
 
-    result = edmonds_karp(capacity, s, t)
-    print("Flujo máximo de {} a {}: {}".format(s, t, result))
+    # Cálculo y resultado
+    resultado = edmonds_karp(capacity, s, t)
+    print(f"\nEl flujo máximo desde el nodo {s} hasta el nodo {t} es: {resultado}\n")
