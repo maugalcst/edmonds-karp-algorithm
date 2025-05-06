@@ -1,51 +1,82 @@
 # Algoritmo de Edmonds–Karp para Flujo Máximo
 
-Este programa implementa el algoritmo de Edmonds–Karp (versión de Ford–Fulkerson con búsqueda en anchura) para calcular el flujo máximo en una red dirigida. Está escrito en Python y es fácil de usar en cualquier entorno que tenga instalado Python 3.6 o superior.
+Este programa en Python calcula el flujo máximo entre dos nodos en una red dirigida utilizando el algoritmo de Edmonds–Karp (una versión de Ford–Fulkerson que emplea BFS para encontrar caminos aumentantes).
+
+La red se modela como un conjunto de "tuberías" (aristas) con un diámetro máximo (capacidad) por donde puede fluir agua (el flujo). El script guía al usuario paso a paso, explicando cada entrada con analogías de tuberías.
 
 ---
 
 ## Requisitos
 
-* Python 3.6 o superior
-* Módulo estándar `collections` (no requiere instalación adicional)
+- Python 3.6 o superior.
+- Solo utiliza el módulo estándar `collections` (no requiere instalaciones adicionales).
 
 ## Instalación
 
-1. Clona o descarga el repositorio que contiene el archivo `edmonds_karp.py`.
-2. Asegúrate de tener instalado Python:
-
+1. Clona el repositorio:
    ```bash
-   python --version
+   git clone https://github.com/maugalcst/edmonds-karp-algorithm.git
+   cd edmonds-karp-algorithm
+   ```
+2. (Opcional) Crea un entorno virtual:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # Linux/Mac
+   venv\Scripts\activate     # Windows
    ```
 
-## Uso
+## Uso del script
 
-Ejecuta el script desde la terminal y proporciona los datos de la red mediante entrada estándar o redireccionando un archivo:
+Ejecuta el programa directamente y sigue las indicaciones en la terminal:
+
+```bash
+python edmonds_karp.py
+``` 
+
+Verás mensajes como:
+
+1. **Número de nodos**: te pedirá cuántas "válvulas" (nodos) hay en tu sistema de tuberías.
+2. **Número de aristas**: cuántas tuberías hay conectando esas válvulas.
+3. **Definición de cada tubería**: para cada tubería, ingresa el nodo de origen, el nodo de destino y la capacidad máxima (diámetro). Imagina que explicas de dónde a dónde va la tubería y cuánta agua puede pasar.
+4. **Nodo fuente y sumidero**: indica la válvula de entrada (fuente) y salida (sumidero) entre las que quieres maximizar el flujo.
+
+Tras la última entrada, el script calculará y mostrará en pantalla:
+
+```
+Flujo máximo de <fuente> a <sumidero>: <valor>
+```
+
+### Ejemplo...
+
+Supongamos un sistema con 4 válvulas y 5 tuberías:
+
+```
+Número de válvulas (nodos): 4
+Número de tuberías (aristas): 5
+Definiendo tubería 1:
+  Origen: 0
+  Destino: 1
+  Capacidad (máximo agua): 100
+...                          # repite para las 5 tuberías
+Fuente (válvula de entrada): 0
+Sumidero (válvula de salida): 3
+```
+
+El resultado esperado será:
+
+```
+Flujo máximo de 0 a 3: 200
+```
+
+## Redirección desde archivo
+
+Si prefieres usar un archivo de texto con las entradas en orden, puedes hacer:
 
 ```bash
 python edmonds_karp.py < input.txt
 ```
 
-### Formato de entrada
-
-La entrada debe ajustarse al siguiente esquema:
-
-```
-n m
-u1 v1 c1
-u2 v2 c2
-...
-um vm cm
-s t
-```
-
-* `n`: número de nodos (etiquetados de `0` a `n-1`).
-* `m`: número de aristas dirigidas.
-* Cada línea `ui vi ci` define una arista de `ui` a `vi` con capacidad `ci`.
-* Finalmente, `s` es el nodo origen y `t` el nodo sumidero.
-
-### Ejemplo de `input.txt`
-
+donde `input.txt` contiene:
 ```
 4 5
 0 1 100
@@ -55,20 +86,3 @@ s t
 2 3 100
 0 3
 ```
-
-Al ejecutar:
-
-```bash
-python edmonds_karp.py < input.txt
-```
-
-La salida será:
-
-```
-Flujo máximo de 0 a 3: 200
-```
-
-## Descripción de las funciones principales
-
-* `bfs(residual, s, t, parent)`: realiza una búsqueda en anchura en la red residual para encontrar un camino aumentante desde `s` hasta `t`. Rellena el array `parent` para reconstruir la ruta.
-* `edmonds_karp(capacity, s, t)`: itera llamando a `bfs`, actualiza la red residual y acumula el flujo hasta que no existan más caminos aumentantes.
